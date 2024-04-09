@@ -30,6 +30,13 @@ Safe ASCII characters in URLs are limited to those that are allowed by RFC3986:
 "uppercase and lowercase letters, decimal digits, hyphen, period, underscore,
 and tilde."
 
+```
+"hello world!\ngoodbye world!\n123456789012345678901234567890123"
+ hel lo_ wor ld! ¿go odb ye_ wor ld! ¿12    345678901234567890123456789012      3
+~helbG8g~worbGQhCmdv~odbeWUg~worbGQhCjEy.10.345678901234567890123456789012......Mw
+aGVsbG8gd29ybGQhCmdvb2RieWUgd29ybGQhCjEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMw
+```
+
 ### encode92 (Z85 + 7 special digits)
 
 For use in string literals, Z85 is used for encoding, the length prefix is `~`
@@ -48,6 +55,13 @@ backtick character and the dollar sign character are unsafe. If unknown, all
 four of these characters must be considered unsafe. Aside from that it includes
 all "printable" ASCII characters except for the backslash, and also includes the
 space character.
+
+```
+"hello world!\ngoodbye world!\n123456789012345678901234567890123"
+   hello_world!¿goo   dbye_wor _ld!¿  12345678901234567890123456789012     3
+|3|hello world!3tjo}||dbye wory?aW@|8|12345678901234567890123456789012.....gx
+xK#0@zY<mxA+]nf3tjo}wmx*}aA}:Ay?aW@f!$Kwh8WxMiwrfygC*%Eh-J/Kf!$Kwh8WxMiwrfygx
+```
 
 Another deviation from the Z85 specification is that the data doesn't need to be
 a multiple of 4 bytes in length.

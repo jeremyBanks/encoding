@@ -17,7 +17,7 @@ const DIGITS_92 = DIGITS_85 + ",.~|_` ";
 
 export function encode92(bytes: Uint8Array): string {
   const encodedBlockSize = 5;
-  const text85 = encode85(bytes);
+  const text85 = _encode85(bytes);
   const blocks = chunk(
     text85 as unknown as any,
     encodedBlockSize,
@@ -52,7 +52,7 @@ export function encode92(bytes: Uint8Array): string {
   cleanBlockCount = 0;
   cleanDataBuffer = "";
   for (const block of blocks) {
-    const b = String.fromCodePoint(...decode85(block));
+    const b = String.fromCodePoint(..._decode85(block));
     const isClean = [...b].every((c) => DIGITS_92.includes(c));
     if (isClean && block.length === encodedBlockSize) {
       cleanBlockCount += 1;
@@ -68,20 +68,16 @@ export function encode92(bytes: Uint8Array): string {
 }
 
 export function decode92(encoded: string): Uint8Array {
-  return decode85(encoded);
+  return _decode85(encoded);
 }
 
-function encode85(bytes: Uint8Array): string {
+export function _encode85(bytes: Uint8Array): string {
   return encodeAscii85(bytes, {
     standard: "Z85",
   });
 }
 
-/**
-Decodes a string encoding bytes using the standard Z85 encoding plus support for
-data that's not a multiple of 4 bytes in length.
-*/
-function decode85(encoded: string): Uint8Array {
+export function _decode85(encoded: string): Uint8Array {
   return decodeAscii85(encoded, {
     standard: "Z85",
   });
