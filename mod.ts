@@ -1,0 +1,177 @@
+/**
+This module provides functions to encode and decode binary data as text using
+variants of the [base64url][IETF RFC 4648 S5] and [Z85][ZMQ RFC 32] encodings
+which attempt to preserve as much of the original data as ASCII as possible
+without negatively affecting intended use cases or affecting the size or
+alignment of surrounding data.
+hCg
+These use the encodings as usual for most data, but if one or more contiguous
+full blocks (3 bytes for base64url, 4 bytes for Z85) of data can be represented
+using ASCII characters that are safe for the intended context, they're instead
+encoded/preserved as ASCII text, with a prefix indicating the length of the
+preserved content (in blocks) and with padding added to the end to maintain the
+alignment of subsequent blocks.
+
+### extended base64url encoding for use in URLs
+
+For use in URLs, base64url is used for encoding, the length prefixes is `~` for
+a single block, `..` for two blocks, and `.N.` for 3 to 999 blocks, where `N` is
+the number of blocks as a decimal number. Where neccessary (4 or more contiguous
+safe blocks), the blocks are padded with trailing `~` characters to maintain the
+original length.
+
+The characters `~` and `.` are chosen because those are the only two characters
+that are [unreserved in URIs by RFC3986][IETF RFC 3986 S2.3] which aren't
+already used by base64url.
+
+Safe ASCII characters in URLs are limited to those that are allowed by RFC3986:
+"uppercase and lowercase letters, decimal digits, hyphen, period, underscore,
+and tilde."
+
+
+#### example
+
+##### binary bytes
+
+```
+68 65 6c 6c 6f 20 77 6f 72 6c 64 21 0a   "hello world!\n"
+```
+
+##### encoded text
+
+```
+~helbG8g..world!Cg
+```
+
+### extended Z85 encoding for use in string literals
+
+For use in string literals, Z85 is used for encoding, the length prefix is `~`
+for a single block, `||` for two blocks, and `|N|` for 3 to 9999 blocks, where
+`N` is the number of blocks as a decimal number.  Where neccessary (4 or more
+contiguous safe blocks), the blocks are padded with trailing `~` characters to
+maintain the original length.
+
+The characters `~` and `|` are chosen arbitrarily from the handful of safe
+characters that are not already used by Z85.
+
+Safe characters in a string depend on the type of type of delimiter. If delmited
+by single quotes, the single quote character is unsafe. If delimited by double
+quotes, the double quote character is unsafe. If delimited by backticks, the
+backtick character and the dollar sign character are unsafe. If unknown, all
+four of these characters must be considered unsafe. Aside from that it includes
+all "printable" ASCII characters except for the backslash, and also includes the
+space character.
+
+Another deviation from the Z85 specification is that the data doesn't need to be
+a multiple of 4 bytes in length.
+
+[ZMQ RFC 32]: https://rfc.zeromq.org/spec/32/
+[IETF RFC 4648 S5]: https://datatracker.ietf.org/doc/html/rfc4648#section-5
+[IETF RFC 3986 S2.3]: https://datatracker.ietf.org/doc/html/rfc3986#section-2.3
+
+@module */
+
+import { decodeAscii85, encodeAscii85 } from "@std/encoding/ascii85";
+import { decodeBase64Url, encodeBase64Url } from "@std/encoding/base64url";
+import { chunk } from "@std/collections/chunk";
+
+/**
+Encodes bytes as a string using the standard Z85 encoding plus support for data
+that's not a multiple of 4 bytes in length.
+*/
+export function encodeZ85(bytes: Uint8Array): string {
+  return encodeAscii85(bytes, {
+    standard: "Z85",
+  });
+}
+
+/**
+Decodes a string encoding bytes using the standard Z85 encoding plus support for
+data that's not a multiple of 4 bytes in length.
+*/
+export function decodeZ85(encoded: string): Uint8Array {
+  return decodeAscii85(encoded, {
+    standard: "Z85",
+  });
+}
+
+/**
+Encodes bytes for inclusion in a string literal using a superset of the Z85 encoding.
+*/
+function encodeForString(
+  encoded: string,
+  options?: { [key: string]: never },
+): Uint8Array {
+  throw new Error("not implemented");
+}
+
+/** Decodes a string encoding bytes using a superset of the Z85 encoding. */
+export function decodeForString(encoded: string): Uint8Array {
+  throw new Error("not implemented");
+}
+
+/** Encodes bytes for including in a string literal using a sup */
+export function encodeForDoubleQuoteString(
+  bytes: Uint8Array,
+  options?: { [key: string]: never },
+): string {
+  return encodeZ85(bytes);
+}
+
+export function encodeForSingleQuoteString(
+  bytes: Uint8Array,
+  options?: { [key: string]: never },
+): string {
+  return encodeZ85(bytes);
+}
+
+export function encodeForBacktickString(
+  bytes: Uint8Array,
+  options?: { [key: string]: never },
+): string {
+  return encodeZ85(bytes);
+}
+
+export function encodeAsDoubledQuoteString(
+  bytes: Uint8Array,
+  options?: { [key: string]: never },
+): string {
+  throw new Error("not implemented");
+}
+
+export function encodeAsSingleQuoteString(
+  bytes: Uint8Array,
+  options?: { [key: string]: never },
+): string {
+  throw new Error("not implemented");
+}
+
+export function encodeAsBacktickString(
+  bytes: Uint8Array,
+  options?: { [key: string]: never },
+): string {
+  throw new Error("not implemented");
+}
+
+/** Tag function to decode a backtick string literal. */
+export function decodeBacktickString(literal: [string]): Uint8Array {
+  throw new Error("not implemented");
+}
+
+/** Encodes bytes as a string using the standard base64url encoding. */
+export function encodeB64(bytes: Uint8Array): string {
+  return encodeBase64Url(bytes);
+}
+
+/** Decodes a string encoding bytes using the standard base64url encoding. */
+export function decodeB64(encoded: string): Uint8Array {
+  return decodeBase64Url(encoded);
+}
+
+export function encodeForUrl(bytes: Uint8Array): string {
+  return encodeB64(bytes);
+}
+
+export function decodeForUrl(encoded: string): Uint8Array {
+  return decodeB64(encoded);
+}
