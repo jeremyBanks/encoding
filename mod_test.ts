@@ -6,23 +6,32 @@ const utf8 = (text: string) => new TextEncoder().encode(text);
 
 Deno.test("encode66", (t) => {
   for (
-    const [input, expected] of [
+    const [input, expected, b64] of [
       [
         utf8("hey\nhello\nhi"),
         "~heyCmhl~lloCmhp",
+        "",
       ],
       [
         utf8("hello world!\ngoodbye world!\n123456789012345678901234567890123"),
         "~helbG8g~worbGQhCmdv~odbeWUg~worbGQhCjEy.10.345678901234567890123456789012......Mw",
+        "",
       ],
       [
         Uint8Array.from(new Array(256).fill(0).map((_, index) => index)),
         "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4v.3.012345678OTo7PD0-P0BB.8.BCDEFGHIJKLMNOPQRSTUVWXY.....WltcXV5fYGFi.8.cdefghijklmnopqrstuvwxyz.....e3x9fn-AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq-wsbKztLW2t7i5uru8vb6_wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t_g4eLj5OXm5-jp6uvs7e7v8PHy8_T19vf4-fr7_P3-_w",
+        "",
       ],
     ] as [Uint8Array, string][]
   ) {
     const encoded = module.encode66(input);
     assertEquals(encoded, expected, "encoded value didn't match expectation");
+
+    assertEquals(
+      module._encode64(input),
+      b64,
+      "encoded value didn't match expectation",
+    );
 
     // const decoded = module.decode66(encoded);
     // assertEquals(decoded, input, "round-tripped value didn't match input");

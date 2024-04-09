@@ -12,9 +12,7 @@ encoded/preserved as ASCII text, with a prefix indicating the length of the
 preserved content (in blocks) and with padding added to the end to maintain the
 alignment of subsequent blocks.
 
-### encode66
-
-### encode85
+### encode66 (base64url + 2 special digits)
 
 extended base64url encoding for use in URLs
 
@@ -32,22 +30,7 @@ Safe ASCII characters in URLs are limited to those that are allowed by RFC3986:
 "uppercase and lowercase letters, decimal digits, hyphen, period, underscore,
 and tilde."
 
-
-#### example
-
-##### binary bytes
-
-```
-68 65 6c 6c 6f 20 77 6f 72 6c 64 21 0a   "hello world!\n"
-```
-
-##### encoded text
-
-```
-~helbG8g..world!Cg
-```
-
-### extended Z85 encoding for use in string literals
+### encode92 (Z85 + 7 special digits)
 
 For use in string literals, Z85 is used for encoding, the length prefix is `~`
 for a single block, `||` for two blocks, and `|N|` for 3 to 9999 blocks, where

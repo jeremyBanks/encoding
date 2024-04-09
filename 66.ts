@@ -15,7 +15,7 @@ const DIGITS_66 = DIGITS_64 + "~.";
 
 export function encode66(bytes: Uint8Array): string {
   const encodedBlockSize = 4;
-  const text64 = encode64(bytes);
+  const text64 = _encode64(bytes);
   const blocks = chunk(
     text64 as unknown as any,
     encodedBlockSize,
@@ -50,7 +50,7 @@ export function encode66(bytes: Uint8Array): string {
   cleanBlockCount = 0;
   cleanDataBuffer = "";
   for (const block of blocks) {
-    const b = String.fromCodePoint(...decode64(block));
+    const b = String.fromCodePoint(..._decode64(block));
     const isClean = [...b].every((c) => DIGITS_66.includes(c));
     if (isClean && block.length === encodedBlockSize) {
       cleanBlockCount += 1;
@@ -66,13 +66,13 @@ export function encode66(bytes: Uint8Array): string {
 }
 
 export function decode66(encoded: string): Uint8Array {
-  return decode64(encoded);
+  return _decode64(encoded);
 }
 
-function encode64(bytes: Uint8Array): string {
+export function _encode64(bytes: Uint8Array): string {
   return encodeBase64Url(bytes);
 }
 
-function decode64(encoded: string): Uint8Array {
+export function _decode64(encoded: string): Uint8Array {
   return decodeBase64Url(encoded);
 }
