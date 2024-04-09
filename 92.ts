@@ -38,9 +38,9 @@ export function encode92(bytes: Uint8Array): string {
       pieces.push(`|4|${cleanDataBuffer}|`);
     } else if (cleanBlockCount <= 999) {
       pieces.push(
-        `|${cleanBlockCount.toString(10)}|${cleanDataBuffer}|`.padEnd(
+        `|${cleanBlockCount.toString(10)}|${cleanDataBuffer}`.padEnd(
           cleanBlockCount * encodedBlockSize,
-          "-",
+          ".",
         ),
       );
     } else {
