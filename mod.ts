@@ -12,6 +12,12 @@ encoded/preserved as ASCII text, with a prefix indicating the length of the
 preserved content (in blocks) and with padding added to the end to maintain the
 alignment of subsequent blocks.
 
+The current implementation are not very efficient. They work, but they're
+probably a lot slower than they need to be. They may also produces invalid
+output instead of throwing errors in some cases of invalid input. Consider this
+more of an example/proof-of-concept for now, and definitely don't use it in a
+security-relevant context with untrusted inputs.
+
 ### encode66 (base64url + 2 special digits)
 
 extended base64url encoding for use in URLs
@@ -72,7 +78,5 @@ a multiple of 4 bytes in length.
 
 @module */
 
-import { chunk } from "@std/collections/chunk";
-
-export * from "./66.ts";
-export * from "./92.ts";
+export { decode66, encode66 } from "./66.ts";
+export { decode92, encode92 } from "./92.ts";

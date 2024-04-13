@@ -15,8 +15,10 @@ YZ.-:+=^!/\
 
 const DIGITS_92 = DIGITS_85 + ",.~|_` ";
 
+const encodedBlockSize = 5;
+const decodedBlockSize = 4;
+
 export function encode92(bytes: Uint8Array): string {
-  const encodedBlockSize = 5;
   const text85 = _encode85(bytes);
   const blocks = chunk(
     text85 as unknown as any,
@@ -68,15 +70,53 @@ export function encode92(bytes: Uint8Array): string {
 }
 
 export function decode92(encoded: string): Uint8Array {
-  return _decode85(encoded);
+  const blocks = chunk(
+    encoded as unknown as any,
+    encodedBlockSize,
+  ) as unknown as string[];
+
+  const pieces: string[] = [];
+
+  for (let i = 0; i < blocks.length; i += 1) {
+    const block = blocks[i]!;
+
+    if (block.length < encodedBlockSize) {
+      pieces.push(block);
+    } else if (block.startsWith("~")) {
+      pieces.push(_encode85(new TextEncoder().encode(block.slice(1))));
+    } else if (block.startsWith("|")) {
+      if (block[1] === "|") {
+        i += 1;
+        const twoBlocks = block + blocks[i];
+        pieces.push(_encode85(new TextEncoder().encode(twoBlocks.slice(2))));
+      } else {
+        const [prefix, prefixDigits] = block.match(/^\|([1-9][0-9]*)\|/)!;
+        const blocksCount = Number(prefixDigits);
+        const allBlocks = blocks.slice(i, i + blocksCount).join("");
+        const dataLength = decodedBlockSize * blocksCount;
+        const rawData = allBlocks.slice(
+          prefix.length,
+          prefix.length + dataLength,
+        );
+        pieces.push(_encode85(new TextEncoder().encode(rawData)));
+        i += blocksCount - 1;
+      }
+    } else {
+      pieces.push(block);
+    }
+  }
+
+  return _decode85(pieces.join(""));
 }
 
+/** @hide */
 export function _encode85(bytes: Uint8Array): string {
   return encodeAscii85(bytes, {
     standard: "Z85",
   });
 }
 
+/** @hide */
 export function _decode85(encoded: string): Uint8Array {
   return decodeAscii85(encoded, {
     standard: "Z85",

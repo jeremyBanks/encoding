@@ -1,4 +1,6 @@
 import * as module from "./mod.ts";
+import { _decode64, _encode64 } from "./66.ts";
+import { _decode85, _encode85 } from "./92.ts";
 
 import { assertEquals } from "@std/assert";
 
@@ -28,13 +30,13 @@ Deno.test("encode66", (t) => {
     assertEquals(encoded, expected, "encoded value didn't match expectation");
 
     assertEquals(
-      module._encode64(input),
+      _encode64(input),
       b64,
       "encoded value didn't match expectation",
     );
 
-    // const decoded = module.decode66(encoded);
-    // assertEquals(decoded, input, "round-tripped value didn't match input");
+    const decoded = module.decode66(encoded);
+    assertEquals(decoded, input, "round-tripped value didn't match input");
   }
 });
 
@@ -62,12 +64,12 @@ Deno.test("encode92", (t) => {
     assertEquals(encoded, expected, "encoded value didn't match expectation");
 
     assertEquals(
-      module._encode85(input),
+      _encode85(input),
       b64,
       "encoded value didn't match expectation",
     );
 
-    // const decoded = module.decode92(encoded);
-    // assertEquals(decoded, input, "round-tripped value didn't match input");
+    const decoded = module.decode92(encoded);
+    assertEquals(decoded, input, "round-tripped value didn't match input");
   }
 });

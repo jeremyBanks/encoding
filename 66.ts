@@ -13,8 +13,10 @@ YZ-_\
 
 const DIGITS_66 = DIGITS_64 + "~.";
 
+const encodedBlockSize = 4;
+const decodedBlockSize = 3;
+
 export function encode66(bytes: Uint8Array): string {
-  const encodedBlockSize = 4;
   const text64 = _encode64(bytes);
   const blocks = chunk(
     text64 as unknown as any,
@@ -66,13 +68,51 @@ export function encode66(bytes: Uint8Array): string {
 }
 
 export function decode66(encoded: string): Uint8Array {
-  return _decode64(encoded);
+  const blocks = chunk(
+    encoded as unknown as any,
+    encodedBlockSize,
+  ) as unknown as string[];
+
+  const pieces: string[] = [];
+
+  for (let i = 0; i < blocks.length; i += 1) {
+    const block = blocks[i]!;
+
+    if (block.length < encodedBlockSize) {
+      pieces.push(block);
+    } else if (block.startsWith("~")) {
+      pieces.push(_encode64(new TextEncoder().encode(block.slice(1))));
+    } else if (block.startsWith(".")) {
+      if (block[1] === ".") {
+        i += 1;
+        const twoBlocks = block + blocks[i];
+        pieces.push(_encode64(new TextEncoder().encode(twoBlocks.slice(2))));
+      } else {
+        const [prefix, prefixDigits] = block.match(/^\.([1-9][0-9]*)\./)!;
+        const blocksCount = Number(prefixDigits);
+        const allBlocks = blocks.slice(i, i + blocksCount).join("");
+        const dataLength = decodedBlockSize * blocksCount;
+        const rawData = allBlocks.slice(
+          prefix.length,
+          prefix.length + dataLength,
+        );
+        pieces.push(_encode64(new TextEncoder().encode(rawData)));
+        i += blocksCount - 1;
+      }
+    } else {
+      pieces.push(block);
+    }
+  }
+
+  return _decode64(pieces.join(""));
 }
 
+/** @hide */
 export function _encode64(bytes: Uint8Array): string {
   return encodeBase64Url(bytes);
 }
 
+/** @hide */
 export function _decode64(encoded: string): Uint8Array {
   return decodeBase64Url(encoded);
 }
