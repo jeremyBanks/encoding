@@ -21,10 +21,11 @@ const decodedBlockSize = 4;
 export function encode92(bytes: Uint8Array): string {
   const text85 = _encode85(bytes);
   const blocks = chunk(
+    // deno-lint-ignore no-explicit-any -- this is very bad and may break
     text85 as unknown as any,
     encodedBlockSize,
   ) as unknown as string[];
-  const pieces = new Array();
+  const pieces = [];
   let cleanBlockCount = 0;
   let cleanDataBuffer = "";
   const flushClean = () => {
@@ -71,6 +72,7 @@ export function encode92(bytes: Uint8Array): string {
 
 export function decode92(encoded: string): Uint8Array {
   const blocks = chunk(
+    // deno-lint-ignore no-explicit-any -- this is very bad and may break
     encoded as unknown as any,
     encodedBlockSize,
   ) as unknown as string[];

@@ -1,12 +1,12 @@
 import * as module from "./mod.ts";
-import { _decode64, _encode64 } from "./66.ts";
-import { _decode85, _encode85 } from "./92.ts";
+import { _encode64 } from "./66.ts";
+import { _encode85 } from "./92.ts";
 
 import { assertEquals } from "@std/assert";
 
 const utf8 = (text: string) => new TextEncoder().encode(text);
 
-Deno.test("encode66", (t) => {
+Deno.test("encode66", () => {
   for (
     const [input, expected, b64] of [
       [
@@ -40,7 +40,7 @@ Deno.test("encode66", (t) => {
   }
 });
 
-Deno.test("encode92", (t) => {
+Deno.test("encode92", () => {
   for (
     const [input, expected, b64] of [
       [
