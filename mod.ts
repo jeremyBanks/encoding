@@ -69,11 +69,14 @@ and space characters.
 This encoding also deviates from the Z85 specification by allowing data that
 isn't a multiple of 4 bytes in length.
 
-Future versions of the {@linkcode encode92} may allow the string delimiters to
-be specified, if known, so that the other 2-3 quoting characters can be safely
-used in the output. {@linkcode decode92} will already handle this case because
-it (and {@linkcode decode66}) don't enforce any constraints on the escaped
-characters (that's strictly an encoding concern).
+If other characters are known to be safe in the context where you're using the
+encoded data, you can also allow them to be treated as safe by specifying them
+in {@linkcode EncodeOptions.extraSafeCharacters} with. By default, the decoding
+functions will not verify that escaped characters are actually marked as safe,
+and that's left as exclusively an encoding concern. If you require a canonical
+encoding (a one-to-one mapping between encoded and decoded values) you can
+enforce that by setting {@linkcode DecodeOptions.strict} as well as any other
+options you set while encoding.
 
 [ZMQ RFC 32]: https://rfc.zeromq.org/spec/32/
 [IETF RFC 4648 S5]: https://datatracker.ietf.org/doc/html/rfc4648#section-5
