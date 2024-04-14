@@ -4,7 +4,7 @@ import {
   DecodeError,
   type DecodeOptions,
   type EncodeOptions,
-  // deno-lint-ignore no-unused-vars
+  // deno-lint-ignore no-unused-vars -- for linking from jsdoc
   type OptionsError,
   SAFE_CHARACTERS,
   validateEncodeOptions,

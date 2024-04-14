@@ -1,3 +1,8 @@
+// deno-lint-ignore no-unused-vars -- for linking from jsdoc
+import type { encode92 } from "./92.ts";
+// deno-lint-ignore no-unused-vars -- for linking from jsdoc
+import type { encode66 } from "./66.ts";
+
 /** Options modifying encoding behavior. */
 export interface EncodeOptions {
   /**
