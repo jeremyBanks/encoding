@@ -1,5 +1,14 @@
 import { decodeBase64Url, encodeBase64Url } from "@std/encoding/base64url";
-import { chunk } from "./_common.ts";
+import {
+  chunk,
+  // deno-lint-ignore no-unused-vars verbatim-module-syntax
+  DecodeError,
+  type DecodeOptions,
+  type EncodeOptions,
+  // deno-lint-ignore no-unused-vars
+  type OptionsError,
+  validateEncodeOptions,
+} from "./_common.ts";
 
 const DIGITS_64 = "\
 0123456789\
@@ -18,9 +27,13 @@ const decodedBlockSize = 3;
 
 /**
  * Encodes bytes as a string using an extended variation of base64url encoding.
+ *
+ * @throws {OptionsError} Thrown if invalid options are provided
  */
-export function encode66(bytes: Uint8Array): string {
-  const text64 = _encode64(bytes);
+export function encode66(bytes: Uint8Array, options?: EncodeOptions): string {
+  validateEncodeOptions(options);
+
+  const text64 = encode64(bytes);
   const blocks = chunk(text64, encodedBlockSize);
   const pieces = [];
   let cleanBlockCount = 0;
@@ -52,7 +65,7 @@ export function encode66(bytes: Uint8Array): string {
   cleanBlockCount = 0;
   cleanDataBuffer = "";
   for (const block of blocks) {
-    const b = String.fromCodePoint(..._decode64(block));
+    const b = String.fromCodePoint(...decode64(block));
     const isClean = [...b].every((c) => DIGITS_66.includes(c));
     if (isClean && block.length === encodedBlockSize) {
       cleanBlockCount += 1;
@@ -69,8 +82,16 @@ export function encode66(bytes: Uint8Array): string {
 
 /**
  * Decodes bytes from a string using an extended variation of base64url encoding.
+ *
+ * @throws {OptionsError} Thrown if invalid options are provided
+ * @throws {DecodeError} Thrown if invalid data is encountered during decoding.
  */
-export function decode66(encoded: string): Uint8Array {
+export function decode66(
+  encoded: string,
+  options?: DecodeOptions,
+): Uint8Array {
+  validateEncodeOptions(options);
+
   const blocks = chunk(encoded, encodedBlockSize);
 
   const pieces: string[] = [];
@@ -81,12 +102,12 @@ export function decode66(encoded: string): Uint8Array {
     if (block.length < encodedBlockSize) {
       pieces.push(block);
     } else if (block.startsWith("~")) {
-      pieces.push(_encode64(new TextEncoder().encode(block.slice(1))));
+      pieces.push(encode64(new TextEncoder().encode(block.slice(1))));
     } else if (block.startsWith(".")) {
       if (block[1] === ".") {
         i += 1;
         const twoBlocks = block + blocks[i];
-        pieces.push(_encode64(new TextEncoder().encode(twoBlocks.slice(2))));
+        pieces.push(encode64(new TextEncoder().encode(twoBlocks.slice(2))));
       } else {
         const [prefix, prefixDigits] = block.match(/^\.([1-9][0-9]*)\./)!;
         const blocksCount = Number(prefixDigits);
@@ -96,7 +117,7 @@ export function decode66(encoded: string): Uint8Array {
           prefix.length,
           prefix.length + dataLength,
         );
-        pieces.push(_encode64(new TextEncoder().encode(rawData)));
+        pieces.push(encode64(new TextEncoder().encode(rawData)));
         i += blocksCount - 1;
       }
     } else {
@@ -104,13 +125,13 @@ export function decode66(encoded: string): Uint8Array {
     }
   }
 
-  return _decode64(pieces.join(""));
+  return decode64(pieces.join(""));
 }
 
-export function _encode64(bytes: Uint8Array): string {
+function encode64(bytes: Uint8Array): string {
   return encodeBase64Url(bytes);
 }
 
-export function _decode64(encoded: string): Uint8Array {
+function decode64(encoded: string): Uint8Array {
   return decodeBase64Url(encoded);
 }

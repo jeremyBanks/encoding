@@ -81,5 +81,11 @@ characters (that's strictly an encoding concern).
 
 @module */
 
+export {
+  DecodeError,
+  type DecodeOptions,
+  type EncodeOptions,
+  OptionsError,
+} from "./_common.ts";
 export { decode66, encode66 } from "./66.ts";
 export { decode92, encode92 } from "./92.ts";
