@@ -13,7 +13,7 @@ YZ.-:+=^!/\
 }@%$#\
 ";
 
-const DIGITS_92 = DIGITS_85 + ",.~|_` ";
+const DIGITS_92 = DIGITS_85 + ",;~|_` ";
 
 const encodedBlockSize = 5;
 const decodedBlockSize = 4;
