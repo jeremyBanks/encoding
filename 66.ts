@@ -6,20 +6,9 @@ import {
   type EncodeOptions,
   // deno-lint-ignore no-unused-vars
   type OptionsError,
+  SAFE_CHARACTERS,
   validateEncodeOptions,
 } from "./_common.ts";
-
-const DIGITS_64 = "\
-0123456789\
-abcdefghij\
-klmnopqrst\
-uvwxyzABCD\
-EFGHIJKLMN\
-OPQRSTUVWX\
-YZ-_\
-";
-
-const DIGITS_66 = DIGITS_64 + "~.";
 
 const encodedBlockSize = 4;
 const decodedBlockSize = 3;
@@ -66,7 +55,8 @@ export function encode66(bytes: Uint8Array, options?: EncodeOptions): string {
   for (const block of blocks) {
     const b = String.fromCodePoint(...decode64(block));
     const isSafe = [...b].every((c) =>
-      DIGITS_66.includes(c) || options?.extraSafeCharacters?.includes(c)
+      SAFE_CHARACTERS.RFC_3986_URL.includes(c) ||
+      options?.extraSafeCharacters?.includes(c)
     );
     if (isSafe && block.length === encodedBlockSize) {
       cleanBlockCount += 1;

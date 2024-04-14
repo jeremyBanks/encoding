@@ -6,22 +6,9 @@ import {
   type EncodeOptions,
   // deno-lint-ignore no-unused-vars
   type OptionsError,
+  SAFE_CHARACTERS,
   validateEncodeOptions,
 } from "./_common.ts";
-
-const DIGITS_85 = "\
-0123456789\
-abcdefghij\
-klmnopqrst\
-uvwxyzABCD\
-EFGHIJKLMN\
-OPQRSTUVWX\
-YZ.-:+=^!/\
-*?&<>()[]{\
-}@%$#\
-";
-
-const DIGITS_92 = DIGITS_85 + ",;~|_` ";
 
 const encodedBlockSize = 5;
 const decodedBlockSize = 4;
@@ -68,7 +55,8 @@ export function encode92(bytes: Uint8Array, options?: EncodeOptions): string {
   for (const block of blocks) {
     const b = String.fromCodePoint(...decode85(block));
     const isSafe = [...b].every((c) =>
-      DIGITS_92.includes(c) || options?.extraSafeCharacters?.includes(c)
+      SAFE_CHARACTERS.STRING.includes(c) ||
+      options?.extraSafeCharacters?.includes(c)
     );
     if (isSafe && block.length === encodedBlockSize) {
       cleanBlockCount += 1;

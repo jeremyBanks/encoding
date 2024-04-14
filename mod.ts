@@ -89,6 +89,7 @@ export {
   type DecodeOptions,
   type EncodeOptions,
   OptionsError,
+  SAFE_CHARACTERS,
 } from "./_common.ts";
 export { decode66, encode66 } from "./66.ts";
 export { decode92, encode92 } from "./92.ts";

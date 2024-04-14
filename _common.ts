@@ -43,6 +43,59 @@ export function validateEncodeOptions(options?: EncodeOptions) {
   }
 }
 
+/**
+ * Sets of characters that are safe to use as-is in different contexts. Some of
+ * these may be useful values for {@linkcode EncodeOptions.extraSafeCharacters}.
+ */
+export const SAFE_CHARACTERS = {
+  /**
+   * The set of URL-safe characters defined by the current
+   * [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986).
+   * This is the default and minimum set of safe characters used by
+   * {@linkcode encode66}.
+   */
+  RFC_3986_URL:
+    "~.-_0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+
+  /**
+   * The broader set of URL-safe characters previously defined by the
+   * now-obsolete [RFC 2396](https://datatracker.ietf.org/doc/html/rfc2396).
+   * This is the set of characters that are preserved by the standard
+   * `encodeURIComponent` function.
+   */
+  RFC_2396_URL:
+    "!()'~.-_0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+
+  /**
+   * Characters that are safe for use in of any of JavaScript's string literal
+   * syntaxes. This is the default and minimum set of safe characters used by
+   * {@linkcode encode92}.
+   */
+  STRING:
+    ".-:+=^!/*?&<>()[]{}@%$#,;~|_` 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+
+  /**
+   * Characters that are safe for use in JavaScript's double-quote-delimited
+   * string literal syntax.
+   */
+  DOUBLE_QUOTE_STRING:
+    "'`$.-:+=^!/*?&<>()[]{}@%$#,;~|_` 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+
+  /**
+   * Characters that are safe for use in JavaScript's single-quote-delimited
+   * string literal syntax.
+   */
+  SINGLE_QUOTE_STRING:
+    '"`$.-:+=^!/*?&<>()[]{}@%$#,;~|_` 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+
+  /**
+   * Characters that are safe for use in JavaScript's backtick-delimited
+   * "template" string literal syntax.
+   */
+  BACKTICK_STRING:
+    "'\".-:+=^!/*?&<>()[]{}@%$#,;~|_` 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+};
+
 export function chunk(input: string, size: number): string[] {
   const ret: Array<string> = Array.from({
     length: Math.ceil(input.length / size),
