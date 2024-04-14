@@ -56,8 +56,8 @@ characters that are not already used by Z85.
 Safe ASCII characters in any JavaScript string literal type include the space
 character and all "printable" ASCII characters except for the backslash, the
 double quote, the backtick, and the dollar sign. This extends the typical set
-of Z85 digits by adding the comma, period, tile, bar, underscore, backtick and
-space characters.
+of Z85 digits by adding the comma, semicolon, tilde, bar, underscore, backtick,
+and space characters.
 
 ```
    input: "hello world!\ngoodbye world!\n123456789012345678901234567890123"
