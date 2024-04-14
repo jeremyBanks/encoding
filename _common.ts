@@ -17,7 +17,7 @@ export interface DecodeOptions extends EncodeOptions {
    *
    * @default false
    */
-  strict: false;
+  strict?: boolean;
 }
 
 /** Thrown if invalid options are provided. */

@@ -1,7 +1,6 @@
 import { decodeAscii85, encodeAscii85 } from "@std/encoding/ascii85";
 import {
   chunk,
-  // deno-lint-ignore no-unused-vars verbatim-module-syntax
   DecodeError,
   type DecodeOptions,
   type EncodeOptions,
@@ -68,8 +67,10 @@ export function encode92(bytes: Uint8Array, options?: EncodeOptions): string {
   cleanDataBuffer = "";
   for (const block of blocks) {
     const b = String.fromCodePoint(...decode85(block));
-    const isClean = [...b].every((c) => DIGITS_92.includes(c));
-    if (isClean && block.length === encodedBlockSize) {
+    const isSafe = [...b].every((c) =>
+      DIGITS_92.includes(c) || options?.extraSafeCharacters?.includes(c)
+    );
+    if (isSafe && block.length === encodedBlockSize) {
       cleanBlockCount += 1;
       cleanDataBuffer += b;
     } else {
@@ -127,7 +128,18 @@ export function decode92(
     }
   }
 
-  return decode85(pieces.join(""));
+  const decoded = decode85(pieces.join(""));
+
+  if (options?.strict) {
+    const reencoded = encode92(decoded, options);
+    if (reencoded !== encoded) {
+      throw new DecodeError(
+        "encoded data had non-canonical representation",
+      );
+    }
+  }
+
+  return decoded;
 }
 
 function encode85(bytes: Uint8Array): string {

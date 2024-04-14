@@ -1,7 +1,6 @@
 import { decodeBase64Url, encodeBase64Url } from "@std/encoding/base64url";
 import {
   chunk,
-  // deno-lint-ignore no-unused-vars verbatim-module-syntax
   DecodeError,
   type DecodeOptions,
   type EncodeOptions,
@@ -66,8 +65,10 @@ export function encode66(bytes: Uint8Array, options?: EncodeOptions): string {
   cleanDataBuffer = "";
   for (const block of blocks) {
     const b = String.fromCodePoint(...decode64(block));
-    const isClean = [...b].every((c) => DIGITS_66.includes(c));
-    if (isClean && block.length === encodedBlockSize) {
+    const isSafe = [...b].every((c) =>
+      DIGITS_66.includes(c) || options?.extraSafeCharacters?.includes(c)
+    );
+    if (isSafe && block.length === encodedBlockSize) {
       cleanBlockCount += 1;
       cleanDataBuffer += b;
     } else {
@@ -125,7 +126,18 @@ export function decode66(
     }
   }
 
-  return decode64(pieces.join(""));
+  const decoded = decode64(pieces.join(""));
+
+  if (options?.strict) {
+    const reencoded = encode66(decoded, options);
+    if (reencoded !== encoded) {
+      throw new DecodeError(
+        "encoded data had non-canonical representation",
+      );
+    }
+  }
+
+  return decoded;
 }
 
 function encode64(bytes: Uint8Array): string {
