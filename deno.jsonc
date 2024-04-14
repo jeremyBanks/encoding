@@ -1,6 +1,6 @@
 {
   "name": "@jeb/encoding",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "tasks": {
     "docs": "deno doc --html --name='@jeb/encoding' mod.ts"
   },
