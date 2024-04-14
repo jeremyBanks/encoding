@@ -16,6 +16,9 @@ const DIGITS_66 = DIGITS_64 + "~.";
 const encodedBlockSize = 4;
 const decodedBlockSize = 3;
 
+/**
+ * Encodes bytes as a string using an extended variation of base64url encoding.
+ */
 export function encode66(bytes: Uint8Array): string {
   const text64 = _encode64(bytes);
   const blocks = chunk(text64, encodedBlockSize);
@@ -64,6 +67,9 @@ export function encode66(bytes: Uint8Array): string {
   return pieces.join("");
 }
 
+/**
+ * Decodes bytes from a string using an extended variation of base64url encoding.
+ */
 export function decode66(encoded: string): Uint8Array {
   const blocks = chunk(encoded, encodedBlockSize);
 

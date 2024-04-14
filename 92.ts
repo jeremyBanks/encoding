@@ -18,6 +18,9 @@ const DIGITS_92 = DIGITS_85 + ",.~|_` ";
 const encodedBlockSize = 5;
 const decodedBlockSize = 4;
 
+/**
+ * Encodes bytes as a string using an extended variation of Z85 encoding.
+ */
 export function encode92(bytes: Uint8Array): string {
   const text85 = _encode85(bytes);
   const blocks = chunk(text85, encodedBlockSize);
@@ -66,6 +69,9 @@ export function encode92(bytes: Uint8Array): string {
   return pieces.join("");
 }
 
+/**
+ * Decodes bytes from a string using an extended variation of Z85 encoding.
+ */
 export function decode92(encoded: string): Uint8Array {
   const blocks = chunk(encoded, encodedBlockSize);
 
