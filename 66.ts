@@ -1,5 +1,5 @@
 import { decodeBase64Url, encodeBase64Url } from "@std/encoding/base64url";
-import { chunk } from "@std/collections";
+import { chunk } from "./_common.ts";
 
 const DIGITS_64 = "\
 0123456789\
@@ -18,11 +18,7 @@ const decodedBlockSize = 3;
 
 export function encode66(bytes: Uint8Array): string {
   const text64 = _encode64(bytes);
-  const blocks = chunk(
-    // deno-lint-ignore no-explicit-any -- this is very bad and may break
-    text64 as unknown as any,
-    encodedBlockSize,
-  ) as unknown as string[];
+  const blocks = chunk(text64, encodedBlockSize);
   const pieces = [];
   let cleanBlockCount = 0;
   let cleanDataBuffer = "";
@@ -69,11 +65,7 @@ export function encode66(bytes: Uint8Array): string {
 }
 
 export function decode66(encoded: string): Uint8Array {
-  const blocks = chunk(
-    // deno-lint-ignore no-explicit-any -- this is very bad and may break
-    encoded as unknown as any,
-    encodedBlockSize,
-  ) as unknown as string[];
+  const blocks = chunk(encoded, encodedBlockSize);
 
   const pieces: string[] = [];
 
@@ -109,12 +101,10 @@ export function decode66(encoded: string): Uint8Array {
   return _decode64(pieces.join(""));
 }
 
-/** @hide */
 export function _encode64(bytes: Uint8Array): string {
   return encodeBase64Url(bytes);
 }
 
-/** @hide */
 export function _decode64(encoded: string): Uint8Array {
   return decodeBase64Url(encoded);
 }

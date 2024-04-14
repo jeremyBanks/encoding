@@ -1,5 +1,5 @@
 import { decodeAscii85, encodeAscii85 } from "@std/encoding/ascii85";
-import { chunk } from "@std/collections";
+import { chunk } from "./_common.ts";
 
 const DIGITS_85 = "\
 0123456789\
@@ -20,11 +20,7 @@ const decodedBlockSize = 4;
 
 export function encode92(bytes: Uint8Array): string {
   const text85 = _encode85(bytes);
-  const blocks = chunk(
-    // deno-lint-ignore no-explicit-any -- this is very bad and may break
-    text85 as unknown as any,
-    encodedBlockSize,
-  ) as unknown as string[];
+  const blocks = chunk(text85, encodedBlockSize);
   const pieces = [];
   let cleanBlockCount = 0;
   let cleanDataBuffer = "";
@@ -71,11 +67,7 @@ export function encode92(bytes: Uint8Array): string {
 }
 
 export function decode92(encoded: string): Uint8Array {
-  const blocks = chunk(
-    // deno-lint-ignore no-explicit-any -- this is very bad and may break
-    encoded as unknown as any,
-    encodedBlockSize,
-  ) as unknown as string[];
+  const blocks = chunk(encoded, encodedBlockSize);
 
   const pieces: string[] = [];
 
@@ -111,14 +103,12 @@ export function decode92(encoded: string): Uint8Array {
   return _decode85(pieces.join(""));
 }
 
-/** @hide */
 export function _encode85(bytes: Uint8Array): string {
   return encodeAscii85(bytes, {
     standard: "Z85",
   });
 }
 
-/** @hide */
 export function _decode85(encoded: string): Uint8Array {
   return decodeAscii85(encoded, {
     standard: "Z85",
