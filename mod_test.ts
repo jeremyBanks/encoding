@@ -55,7 +55,7 @@ Deno.test("encode92", () => {
       ],
       [
         Uint8Array.from(new Array(256).fill(0).map((_, index) => index)),
-        "009c61o!#m2NH?C3>iWS5d]J*6CRx17-skh9337xar.{NbQB=+|4|()*+,-./01234567|i5%2Y|8|<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[.....tWpVy|7|`abcdefghijklmnopqrstuvwxyz{....E0{D[FpSr8GOteoH(41EJe-<UKDCY&L:dM3N3<zjOsMmzPRn9PQ[%@^ShV!$TGwUeU^7HuW6^uKXvGh.YUh4]Z})[9-kP:p:JqPF+*1CV^9Zp<!yAd4/Xb0k*$*&A&nJXQ<MkK!>&}x#)cTlf[Bu8v].4}L}1:^-@qDS{",
+        "009c61o!#m2NH?C3>iWS5d]J*6CRx17-skh9337xar.{NbQB=+|13|()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[.........tWpVy|7|`abcdefghijklmnopqrstuvwxyz{....E0{D[FpSr8GOteoH(41EJe-<UKDCY&L:dM3N3<zjOsMmzPRn9PQ[%@^ShV!$TGwUeU^7HuW6^uKXvGh.YUh4]Z})[9-kP:p:JqPF+*1CV^9Zp<!yAd4/Xb0k*$*&A&nJXQ<MkK!>&}x#)cTlf[Bu8v].4}L}1:^-@qDS{",
         "009c61o!#m2NH?C3>iWS5d]J*6CRx17-skh9337xar.{NbQB=+c[cR@eg&FcfFLssg=mfIi5%2YjuU>)kTv.7l}6Nnnj=ADoIFnTp/ga?r8($2sxO*itWpVyu$0IOwmYv=xLzi%y&a6dAb/]tBAI+JCZjQZE0{D[FpSr8GOteoH(41EJe-<UKDCY&L:dM3N3<zjOsMmzPRn9PQ[%@^ShV!$TGwUeU^7HuW6^uKXvGh.YUh4]Z})[9-kP:p:JqPF+*1CV^9Zp<!yAd4/Xb0k*$*&A&nJXQ<MkK!>&}x#)cTlf[Bu8v].4}L}1:^-@qDS{",
       ],
     ] as [Uint8Array, string, string][]
