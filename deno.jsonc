@@ -15,6 +15,9 @@
     "@std/encoding": "jsr:@std/encoding@^0.222.1"
   },
   "exports": {
-    ".": "./mod.ts"
+    ".": "./mod.ts",
+    "standards": "./standards.ts",
+    "encoding": "./encoding.ts",
+    "encodings": "./encodings.ts"
   }
 }
